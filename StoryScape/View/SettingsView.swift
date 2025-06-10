@@ -8,8 +8,7 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @State var isDarkModeEnabled: Bool = true
-    @State var downloadViaWifiEnabled: Bool = false
+    @StateObject private var themeVM = ThemeViewModel()
     
     var body: some View {
         NavigationView {
@@ -51,9 +50,17 @@ struct SettingsView: View {
                 }
                 
                 Section(header: Text("APPEARANCE"), content: {
-                    NavigationLink(destination: Text("Themes")) {
-                        ImageText(imageText: "paintpalette", text: "Theme")
-                    }
+                    NavigationLink(
+                                        destination: Themes(viewModel: themeVM),
+                                        label: {
+                                            HStack {
+                                                ImageText(imageText: "paintpalette", text: "Themes")
+                                                Spacer()
+                                                Text(themeVM.selectedTheme.rawValue)
+                                                    .foregroundColor(.secondary)
+                                            }
+                                        }
+                                    )
                     
                     NavigationLink(destination: Text("Font style")) {
                         ImageText(imageText: "textformat", text: "Font style")
