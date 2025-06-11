@@ -9,17 +9,14 @@ import SwiftUI
 
 @main
 struct StoryScapeApp: App {
-    @AppStorage("selectedTheme") private var selectedThemeRawValue: String = AppTheme.system.rawValue
+    @StateObject private var themeViewModel = ThemeViewModel()
     
     var body: some Scene {
            WindowGroup {
-               let selectedTheme = AppTheme(rawValue: selectedThemeRawValue) ?? .system
-               if selectedTheme == .system {
-                   ContentView()
-               } else {
-                   ContentView()
-                       .preferredColorScheme(selectedTheme == .light ? .light : .dark)
-               }
+               ContentView()
+                   .environmentObject(themeViewModel)
+                   .environmentObject(TabBarState())
+                   .preferredColorScheme(themeViewModel.selectedTheme == .system ? nil : themeViewModel.selectedTheme == .light ? .light : .dark)
            }
        }
 }

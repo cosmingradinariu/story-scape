@@ -25,3 +25,6 @@ struct Themes: View {
     }
 }
 
+#Preview {
+    SettingsView()
+}

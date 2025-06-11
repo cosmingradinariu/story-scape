@@ -20,7 +20,7 @@ struct SettingsView: View {
                             Image(systemName: "person.circle.fill")
                                 .resizable()
                                 .frame(width:100, height: 100, alignment: .center)
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(Color(.lightGray))
                             Text("Caricioru")
                                 .font(.title)
                             Text("caricioru@gmail.com")

@@ -22,3 +22,7 @@ enum TabModel: String, CaseIterable {
         }
     }
 }
+
+class TabBarState: ObservableObject {
+    @Published var isTabBarHidden: Bool = false
+}

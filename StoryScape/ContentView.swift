@@ -10,6 +10,8 @@ import SwiftUI
 struct ContentView: View {
     @State private var activeTab: TabModel = .home
     @State private var isTabBarHidden: Bool = false
+    
+    @EnvironmentObject var tabBarState: TabBarState
     var body: some View {
         ZStack(alignment: .bottom) {
             Group {
@@ -56,7 +58,9 @@ struct ContentView: View {
                 }
             }
             
-            TabBarView(activeTab: $activeTab)
+            if !tabBarState.isTabBarHidden {
+                TabBarView(activeTab: $activeTab)
+            }
         }
     }
 }
