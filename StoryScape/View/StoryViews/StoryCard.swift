@@ -8,17 +8,23 @@
 import SwiftUI
 
 struct StoryCard: View {
+    @State private var dogImage: DummyImage?
     var story: Story
-    var dummyImages = ["flamingos", "blue_image", "green_image"]
+    
     var body: some View {
         VStack {
-            Image(dummyImages.randomElement() ?? "flamingos")
-                .resizable()
-                .scaledToFit()
-                .clipped()
+            AsyncImage(url: URL(string: dogImage?.message ?? "")) { image in
+                image
+                    .resizable()
+                    .scaledToFit()
+                    .clipped()
+            } placeholder: {
+                RoundedRectangle(cornerRadius: 10)
+                    .foregroundStyle(.secondary)
+            }
+                
             HStack {
                 VStack(alignment: .leading) {
-                    
                     Text(story.title)
                         .font(.title3)
                         .fontWeight(.medium)
@@ -53,10 +59,43 @@ struct StoryCard: View {
                 .stroke(Color.gray.opacity(0.2), lineWidth: 1)
                 .shadow(radius: 4, x: 0, y: 4)
         }
-        .padding()
+        .task {
+            do {
+                dogImage = try await getImage()
+            } catch {
+                print("Error")
+            }
+        }
+    }
+    
+    func getImage() async throws -> DummyImage {
+        let endpoint = "https://dog.ceo/api/breeds/image/random"
+        guard let url = URL(string: endpoint) else { throw DummyError.invalidURL }
+        
+        let (data, response) = try await URLSession.shared.data(from: url)
+        
+        guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
+            throw DummyError.invalidURL
+        }
+        
+        do {
+            let decoder = JSONDecoder()
+            return try decoder.decode(DummyImage.self, from: data)
+        } catch {
+            throw DummyError.invalidData
+        }
     }
 }
 
 #Preview {
     StoryCard(story: Story.dummyStory)
+}
+
+struct DummyImage: Codable {
+    let message: String
+}
+
+enum DummyError: Error {
+    case invalidURL
+    case invalidData
 }

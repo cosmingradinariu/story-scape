@@ -13,9 +13,11 @@ struct NewStoryView: View {
     
     @State private var title = ""
     @State private var genre = "" ///to change later: from a textfield where you can add 1 genre, to a multipicker view/multi selecting tags with genres.
+    ///change the variables below to be optional for when integrating api
     @State private var maxEntries = ""
     @State private var description = ""
     @State private var storyCreator = ""
+    @State private var imageURL = ""
     
     var body: some View {
         Form {

@@ -38,14 +38,30 @@ struct StoryFeed: View {
     @State private var activeTab: TabModel = .home
     @State private var isTabBarHidden: Bool = false
     
+    let columns = [GridItem(.flexible())]
+    
     var body: some View {
         NavigationStack {
             ScrollView {
-                ForEach(stories) { story in
-                    NavigationLink(destination: StoryView(story: story)) {
-                        StoryCard(story: story)
+                HStack(alignment: .top) {
+                    LazyVGrid(columns: columns) {
+                        ForEach(stories) { story in
+                            NavigationLink(destination: StoryView(story: story)) {
+                                StoryCard(story: story)
+                            }
+                        }
                     }
+                    
+                    LazyVGrid(columns: columns) {
+                        ForEach(stories) { story in
+                            NavigationLink(destination: StoryView(story: story)) {
+                                StoryCard(story: story)
+                            }
+                        }
+                    }
+
                 }
+                .padding()
             }
             .buttonStyle(.plain)
             .navigationTitle("StoryScape")
