@@ -28,3 +28,12 @@ struct Story: Identifiable {
         StoryEntry(author: "Cosmin", content: "Caricioru.")
     ], maxEntries: 5)
 }
+
+struct DummyImage: Codable {
+    let message: String
+}
+
+enum DummyError: Error {
+    case invalidURL
+    case invalidData
+}

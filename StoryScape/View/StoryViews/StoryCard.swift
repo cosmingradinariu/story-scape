@@ -9,6 +9,7 @@ import SwiftUI
 
 struct StoryCard: View {
     @State private var dogImage: DummyImage?
+    @StateObject var viewModel = StoryViewModel()
     var story: Story
     
     var body: some View {
@@ -24,11 +25,11 @@ struct StoryCard: View {
             }
                 
             HStack {
-                VStack(alignment: .leading) {
+                VStack(alignment: .leading, spacing: 15) {
                     Text(story.title)
-                        .font(.title3)
+                        .font(.headline)
                         .fontWeight(.medium)
-                        .padding(.top, -10)
+                        .padding(.top, -5)
                         .padding(.bottom, 5)
                         .foregroundStyle(.primary)
                     
@@ -40,14 +41,16 @@ struct StoryCard: View {
                     
                     HStack {
                         Text(story.genre)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                            .font(.caption2)
+                            .foregroundStyle(.blue.gradient)
                         
                         Spacer()
-                        
-                        Text("Created by " + (story.author ?? "Anonymous"))
-                            .font(.caption2)
-                            .foregroundStyle(.tertiary)
+                        ///instead of created by, show a circle image profile with the user's profile pic. if the user doesn't have a profile pic, show initials if he has first and last name, one initial if he has only first/last name.
+                        ///if the user doesn't have an account show something different from those above (question mark in a circle).
+//                        Text("Created by " + (story.author ?? "Anonymous"))
+//                            .font(.caption2)
+//                            .foregroundStyle(.tertiary)
+                        ProfileIconView()
                     }
                 }
                 .padding()
@@ -56,33 +59,15 @@ struct StoryCard: View {
         .clipShape(RoundedRectangle(cornerRadius: 20))
         .overlay {
             RoundedRectangle(cornerRadius: 20)
-                .stroke(Color.gray.opacity(0.2), lineWidth: 1)
-                .shadow(radius: 4, x: 0, y: 4)
-        }
+                .stroke(Color.black.opacity(0.2), lineWidth: 1)
+                .shadow(radius: 5, x: 0, y: 10)
+        }///to remove this and include in a viewModel or something
         .task {
             do {
-                dogImage = try await getImage()
+                dogImage = try await viewModel.getImage()
             } catch {
                 print("Error")
             }
-        }
-    }
-    
-    func getImage() async throws -> DummyImage {
-        let endpoint = "https://dog.ceo/api/breeds/image/random"
-        guard let url = URL(string: endpoint) else { throw DummyError.invalidURL }
-        
-        let (data, response) = try await URLSession.shared.data(from: url)
-        
-        guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
-            throw DummyError.invalidURL
-        }
-        
-        do {
-            let decoder = JSONDecoder()
-            return try decoder.decode(DummyImage.self, from: data)
-        } catch {
-            throw DummyError.invalidData
         }
     }
 }
@@ -91,11 +76,3 @@ struct StoryCard: View {
     StoryCard(story: Story.dummyStory)
 }
 
-struct DummyImage: Codable {
-    let message: String
-}
-
-enum DummyError: Error {
-    case invalidURL
-    case invalidData
-}
